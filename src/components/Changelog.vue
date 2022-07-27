@@ -5,6 +5,7 @@
   
     <div>
       <button class="topBtn" @click="SaveToLocalStorage" style="margin-right: 1rem">Sauvegarder</button>
+      <button class="topBtn" @click="resetSave" style="margin-right: 1rem">RESET</button>
       <button class="topBtn" v-if="!editMode && changelogSaved" @click="editMode = true">Éditer</button>
       <button class="topBtn" v-if="editMode && changelogSaved" @click="editMode = false">Stop Éditer</button>
       <button class="topBtn" v-if="changelogSaved" @click="deleteChangelog" style="margin-left: 1rem">Supprimer le changelog</button>
@@ -31,8 +32,8 @@
               </div>
               <ul v-for="(add, index) in changelog.added" :key="index">
                 <li>
-                  <div style="width: 700px" ref="container">
-                    <textarea rows="1" @focus="resizeTextarea" @keyup="resizeTextarea" v-model="changelog.added[index]" />
+                  <div>
+                    <input class="text" style="width: 95%" v-model="changelog.added[index]" @keyup.enter="newLine(changelogIndex, 'added', index)" />
                   </div>
                 </li>
               </ul>
@@ -44,9 +45,11 @@
                 <CloseCircle @click="deleteSection('changed', changelogIndex)" v-if="editMode" :size="30" fillColor="red" class="delete" />
                 <button class="changelog__section-container-btn changed">CHANGÉ</button>
               </div>
-              <ul v-for="(change) in changelog.changed" :key="change">
+              <ul v-for="(change, index) in changelog.changed" :key="index">
                 <li class="editable" contenteditable="true" @blur="SaveToLocalStorage">
-                  {{change}}
+                  <div>
+                    <input class="text" style="width: 95%" v-model="changelog.changed[index]" @keyup.enter="newLine(changelogIndex, 'changed', index)" />
+                  </div>
                 </li>
               </ul>
             </div>
@@ -57,9 +60,11 @@
                 <CloseCircle @click="deleteSection('fixed', changelogIndex)" v-if="editMode" :size="30" fillColor="red" class="delete" />
                 <button class="changelog__section-container-btn fixed">CORRIGÉ</button>
               </div>
-              <ul v-for="fix in changelog.fixed" :key="fix">
+              <ul v-for="(fix, index) in changelog.fixed" :key="index">
                 <li>
-                  {{fix}}
+                  <div>
+                    <input class="text" style="width: 95%" v-model="changelog.fixed[index]" @keyup.enter="newLine(changelogIndex, 'fixed', index)" />
+                  </div>
                 </li>
               </ul>
             </div>
@@ -70,9 +75,11 @@
                 <CloseCircle @click="deleteSection('removed', changelogIndex)" v-if="editMode" :size="30" fillColor="red" class="delete" />
                 <button class="changelog__section-container-btn removed">SUPPRIMÉ</button>
               </div>
-              <ul v-for="remove in changelog.removed" :key="remove">
+              <ul v-for="(remove, index) in changelog.removed" :key="index">
                 <li>
-                  {{remove}}
+                  <div>
+                    <input class="text" style="width: 95%" v-model="changelog.removed[index]" @keyup.enter="newLine(changelogIndex, 'removed', index)" />
+                  </div>
                 </li>
               </ul>
             </div>
@@ -136,37 +143,62 @@ export default {
           ]
         }
       ],
-      newChangelogs: []
+      unchangedChangelogs: [
+        {
+          id: 0,
+          ver: '2.46.3',
+          date: '5 Juillet 2022',
+          added: [
+            'Le champ “email” est désormais obligatoire lors de la création d’un patient',
+            'En version dégradé, ajout d’un bouton permettant de revenir en mode Normale'
+          ],
+          changed: [
+            'La popup de choix de contenu met désormais un temps raisonnable à disparaître'
+          ],
+          fixed: [
+            'Correction d’un bug qui empêchait de lancer un exercice en mode hors-dossier',
+            'Correction d’un bug où l’exportation des textes de contenus ne fonctionnait pas'
+          ],
+          removed: [
+            'Suppression de l\'ancienne méthode d\'exportation de textes.'
+          ]
+        },
+        {
+          id: 1,
+          ver: '2.46.0',
+          date: '4 Juillet 2022',
+          added: [
+            'Message d’erreur si le contenu ne se télécharge pas côté particulier',
+          ],
+          changed: [
+            'En exercice d\'alternance, l\'arrondi du curseur est réduit à 5 et le "step" du curseur (son et pause) est supprimé'
+          ],
+          fixed: [
+            'Le surlignage de séance différée ne s’efface plus si le particulier a commencé le dernier exercice',
+            'Correction d’un bug qui faisait apparaître les paramètres double cartes son en modifiant la fenêtre des paramètres, alors qu’une seule carte son est active'
+          ]
+        }
+      ]
     }
   },
   created() {
     this.getLocalStorageSave()
   },
-  mounted() {
-    this.$nextTick(()=>{
-    this.$refs.container.forEach( ta => {
-        ta.firstChild.dispatchEvent(new Event("keyup"));
-      });
-    });
-  },
   updated() {
     this.SaveToLocalStorage()
+    this.checkIfLineEmpty()
   },
   methods: {
-    resizeTextarea(e) {
-      let area = e.target;
-      area.style.overflow = 'hidden';
-      area.style.height = area.scrollHeight + 'px';
+    resetSave () {
+      localStorage.setItem('changelog', JSON.stringify(this.unchangedChangelogs))
     },
     SaveToLocalStorage() {
-      console.log(this.changelogs)
       localStorage.setItem('changelog', JSON.stringify(this.changelogs))
     },
     getLocalStorageSave() {
       if (localStorage.getItem('changelog') !== null) {
         this.changelogs = JSON.parse(localStorage.getItem('changelog'))
         this.changelogSaved = true
-        // console.log(changelog)
       } else {
         this.changelogSaved = false
         console.log('no changelog saved')
@@ -179,6 +211,38 @@ export default {
     },
     deleteSection(sectionType, changelogIndex) {
       this.changelogs[changelogIndex][`${sectionType}`] = null
+    },
+    newLine(changelogIndex, type, index) {
+      this.changelogs[changelogIndex][`${type}`].splice(index, 0, ' ')
+    },
+    checkIfLineEmpty () {
+      for (const changelog of this.changelogs) {
+        for (const add of changelog.added) {
+          if (add === '') {
+            changelog.added.splice(changelog.added.indexOf(add), 1)
+          }
+        }
+        for (const remove of changelog.removed) {
+          if (remove === '') {
+            changelog.removed.splice(changelog.removed.indexOf(remove), 1)
+          }
+        }
+        for (const fix of changelog.fixed) {
+          if (fix === '') {
+            changelog.fixed.splice(changelog.fixed.indexOf(fix), 1)
+          }
+        }
+        for (const change of changelog.changed) {
+          if (change === '') {
+            changelog.changed.splice(changelog.changed.indexOf(change), 1)
+          }
+        }
+      }
+    },
+    arrayRemove (arr, value) {
+      return arr.filter(function(ele){ 
+          return ele != value;
+      })
     }
   }
 }
@@ -279,6 +343,13 @@ export default {
 
 li {
   margin-bottom: 8px;
+}
+
+.text {
+  border: none;
+  background: #F5F5F5;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-size: 15px;
 }
 
 .add {
