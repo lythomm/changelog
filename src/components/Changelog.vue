@@ -11,13 +11,15 @@
       <button class="topBtn" v-if="changelogSaved" @click="deleteChangelog" style="margin-left: 1rem">Supprimer le changelog</button>
     </div>
 
-    <div v-if="changelogSaved">
+    <div v-if="!changelogSaved">
+      Commencer a écrire mon changelog
+      <div style="margin-top: 1rem">
+        <fa icon="circle-plus" :style="{ color: '#5968E5', cursor: 'pointer' }" size="2x" />
+      </div>
+    </div>
+
+    <div v-else>
       <div class="changelog__section" v-for="(changelog, changelogIndex) in changelogs" :key="changelog.id">
-        <!-- <div class="changelog__section-left">
-          <div class="changelog__section-date">{{changelog.date}}</div>
-          <div class="circle" />
-          <div class="circleHide" />
-        </div> -->
         <div class="changelog__section-body">
           <div style="display: flex; align-items: center">
             <h3 style="color: #5968E5">v{{changelog.ver}}</h3>
@@ -86,10 +88,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div v-else>
-      Commencer a écrire mon changelog
     </div>
 
   </div>
@@ -186,17 +184,18 @@ export default {
   },
   updated() {
     this.SaveToLocalStorage()
-    this.checkIfLineEmpty()
+    // this.checkIfLineEmpty()
   },
   methods: {
     resetSave () {
       localStorage.setItem('changelog', JSON.stringify(this.unchangedChangelogs))
+      this.changelogSaved = true
     },
-    SaveToLocalStorage() {
+    SaveToLocalStorage () {
       localStorage.setItem('changelog', JSON.stringify(this.changelogs))
     },
-    getLocalStorageSave() {
-      if (localStorage.getItem('changelog') !== null) {
+    getLocalStorageSave () {
+      if (localStorage.getItem('changelog') !== 'null') {
         this.changelogs = JSON.parse(localStorage.getItem('changelog'))
         this.changelogSaved = true
       } else {
@@ -204,16 +203,16 @@ export default {
         console.log('no changelog saved')
       }
     },
-    deleteChangelog() {
+    deleteChangelog () {
       localStorage.removeItem('changelog')
       this.changelogs = null
       this.changelogSaved = false
     },
-    deleteSection(sectionType, changelogIndex) {
+    deleteSection (sectionType, changelogIndex) {
       this.changelogs[changelogIndex][`${sectionType}`] = null
     },
-    newLine(changelogIndex, type, index) {
-      this.changelogs[changelogIndex][`${type}`].splice(index, 0, ' ')
+    newLine (changelogIndex, type, index) {
+      this.changelogs[changelogIndex][`${type}`].splice(index, 0, '')
     },
     checkIfLineEmpty () {
       for (const changelog of this.changelogs) {
@@ -269,43 +268,6 @@ export default {
   margin-bottom: 1rem;
 }
 
-/* .changelog__section-left {
-  width: 250px;
-  padding: 1rem;
-  border-right: 4px solid #5968E5;
-  margin-right: 6rem;
-  padding-right: -2rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-.changelog__section-date {
-  font-weight: 600;
-  flex: 1;
-} */
-
-/* .circleHide {
-  width: 40px;
-  height: 40px;
-  background: white;
-  border-radius: 50%;
-  position: absolute;
-  left: 392px;
-  margin-top: -18px;
-  z-index: 0;
-}
-
-.circle {
-  width: 40px;
-  height: 40px;
-  background: #5968E5;
-  border-radius: 50%;
-  position: absolute;
-  left: 392px;
-  margin-top: -10px;
-  z-index: 1;
-} */
-
 .changelog__section-body {
   display: flex;
   flex-direction: column;
@@ -313,7 +275,6 @@ export default {
   text-align: left;
   flex: 1;
   padding: 0 1rem;
-  /* margin-right: 2rem; */
   background: #F5F5F5;
   border-radius: 10px;
 }
