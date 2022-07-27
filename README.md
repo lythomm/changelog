@@ -1,24 +1,16 @@
-# changelog
+# Changelog Editor
+This is a changelog editor made by my own on my free time to improve my company's current changelog system which needs some improvements. This is nothing special or fancy but I wanted to do it !
 
-## Project setup
+## Project Setup
+
 ```
 npm install
 ```
-
-### Compiles and hot-reloads for development
+Compile and run the project
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## More Information
+This is currently in developpement. 🛠
+## External dependencies
+* [vuejs](https://vuejs.org/)
