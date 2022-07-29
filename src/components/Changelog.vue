@@ -29,7 +29,7 @@
               <div class="separator" />
               <input class="date" style="font-weight: bold" v-model="changelog.date" />
             </div>
-            <Tooltip :changelogId="1" :type="'added'" :changelog="changelog" />
+            <Tooltip :changelogId="changelogIndex" :type="'added'" :changelog="changelog" />
             <!-- <fa icon="circle-plus" :style="{ color: '#5968E5', cursor: 'pointer' }" size="2x" @click="createNewSection(changelogIndex, 'added')" /> -->
             <div class="changelog__section-container">
               <div v-if="changelog.added">

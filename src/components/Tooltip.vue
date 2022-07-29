@@ -3,17 +3,17 @@
     <fa icon="circle-plus" :style="{ color: '#5968E5', cursor: 'pointer' }" size="2x"  @click="dropdown = !dropdown" />
     <Transition name="slide-fade">
       <div class="dropdown" v-if="dropdown">
-        <div class="section added" style="margin:0 10px" v-if="!changelog.added">
-          <span>AJOUTÉ</span>
+        <div class="section added" style="margin-left: 10px" v-if="!changelog.added">
+          <span @click="createSection('added')">AJOUTÉ</span>
         </div>
         <div class="section changed" style="margin-left:10px" v-if="!changelog.changed">
-          <span>CHANGÉ</span>
+          <span @click="createSection('changed')">CHANGÉ</span>
         </div>
         <div class="section fixed" style="margin-left:10px" v-if="!changelog.fixed">
-          <span>CORRIGÉ</span>
+          <span @click="createSection('fixed')">CORRIGÉ</span>
         </div>
         <div class="section removed" style="margin:0 10px" v-if="!changelog.removed">
-          <span>SUPPRIMÉ</span>
+          <span @click="createSection('removed')">SUPPRIMÉ</span>
         </div>
       </div>
     </Transition>
@@ -31,6 +31,11 @@ export default {
   data () {
     return {
       dropdown: true
+    }
+  },
+  methods: {
+    createSection (type) {
+      console.log(type)
     }
   }
 }
@@ -59,11 +64,11 @@ export default {
   /* --translate-y: calc(-1 * 10px); */
   transform: rotate(180deg);
   position: absolute;
-  left: 50%;
+  left: 48%;
   top: -19px;
   content: '';
   border: 10px solid transparent;
-  border-top-color: red;
+  border-top-color: white;
 }
 
 .section {
