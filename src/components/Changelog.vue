@@ -5,7 +5,7 @@
   
     <div>
       <!-- <button class="topBtn" @click="SaveToLocalStorage" style="margin-right: 1rem">Sauvegarder</button> -->
-      <button class="topBtn" @click="resetSave" style="margin-right: 1rem">RESET</button>
+      <!-- <button class="topBtn" @click="resetSave" style="margin-right: 1rem">RESET</button> -->
       <!-- <button class="topBtn" v-if="changelogActive" @click="deleteChangelog" style="margin-left: 1rem">Supprimer le changelog</button> -->
     </div>
 
@@ -29,8 +29,7 @@
               <div class="separator" />
               <input class="date" style="font-weight: bold" v-model="changelog.date" />
             </div>
-            <Tooltip :changelogId="changelogIndex" :type="'added'" :changelog="changelog" />
-            <!-- <fa icon="circle-plus" :style="{ color: '#5968E5', cursor: 'pointer' }" size="2x" @click="createNewSection(changelogIndex, 'added')" /> -->
+            <!-- <Tooltip :changelogId="changelogIndex" :type="'added'" :changelog="changelog" @new-section="createNewSection" /> -->
             <div class="changelog__section-container">
               <div v-if="changelog.added">
                 <div style="display: flex; align-items: center">
@@ -46,9 +45,6 @@
                   </li>
                 </ul>
               </div>
-              <!-- <div v-else>
-                <fa icon="circle-plus" :style="{ color: '#5968E5', cursor: 'pointer' }" size="2x" @click="createNewSection(changelogIndex, 'added')" />
-              </div> -->
             </div>
             <div class="changelog__section-container">
               <div v-if="changelog.changed">
@@ -97,7 +93,7 @@
                   </li>
                 </ul>
               </div>
-              <!-- <Tooltip :changelogId="1" :type="'added'" :changelog="changelog" /> -->
+              <Tooltip :changelogId="changelogIndex" :type="'added'" :changelog="changelog" @new-section="createNewSection" />
             </div>
           </div>
           <div style="display: flex; align-items: center; margin-right: -3.5rem; margin-left: 1rem">
