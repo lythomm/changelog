@@ -30,7 +30,7 @@ export default {
   },
   data () {
     return {
-      dropdown: true,
+      dropdown: false,
       changelogEmpty: false
     }
   },
