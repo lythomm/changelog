@@ -173,12 +173,11 @@ export default {
       localStorage.setItem('changelog', JSON.stringify(this.changelogs))
     },
     getLocalStorageSave () {
-      if (localStorage.getItem('changelog') !== 'null') {
+      if (localStorage.getItem('changelog') !== null && localStorage.getItem('changelog').length > 2 ) {
         this.changelogs = JSON.parse(localStorage.getItem('changelog'))
         this.changelogActive = true
       } else {
         this.changelogActive = false
-        console.log('no changelog saved')
       }
     },
     deleteChangelog () {
